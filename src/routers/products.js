@@ -75,7 +75,7 @@ productRouter.post(`/`, async(req, res)=>{
   
 })
 productRouter.delete(`/:id`, async(req, res) => {
-
+console.log('Hello Delelte')
   if(!mongoose.isValidObjectId(req.params.id)) return res.status(400).send('Product Not Found')
 
   const product = await Product.findByIdAndRemove(req.params.id)

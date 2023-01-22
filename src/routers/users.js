@@ -23,7 +23,7 @@ userRouter.get("/:id", async (req, res) => {
     res.status(500).send(error);
   }
 });
-userRouter.post("/", async (req, res) => {
+userRouter.post("/register", async (req, res) => {
   try {
     let user = User({
       name: req.body.name,
@@ -53,6 +53,7 @@ userRouter.post("/login", async (req, res) => {
     const token = jwt.sign(
       {
         user: user.id,
+        isAdmin: user.isAdmin
       },
       process.env.SECRET,
       {
@@ -66,6 +67,25 @@ userRouter.post("/login", async (req, res) => {
   } else {
     res.status(400).send("Not Authenticated");
   }
+});
+userRouter.get("/count", async (req, res) => {
+  try {
+      const count = await User.countDocuments();
+    res.status(200).json({
+      count: count
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+userRouter.delete(`/:id`, async(req, res) => {
+
+  if(!mongoose.isValidObjectId(req.params.id)) return res.status(400).send('User Not Found')
+
+  const user = await User.findByIdAndRemove(req.params.id)
+  if(!user) return res.status(500).send("User Not Found")
+
+  res.status(200).send("User Deleted")
 });
 
 module.exports = userRouter;

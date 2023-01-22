@@ -5,6 +5,7 @@ function expressJwt(req, res, next) {
   return expressjwt({
     secret: process.env.SECRET,
     algorithms: ["HS256"],
+    isRevoked: isRevoked
   }).unless({
     path: [
       { url: /\/api\/v1\/products(.*)/, methods: ['GET', 'OPTIONS'] },
@@ -13,6 +14,14 @@ function expressJwt(req, res, next) {
       `${api}/users/register`,
     ],
   });
+}
+
+async function isRevoked(req, payload){
+  console.log(payload.payload.isAdmin)
+  if(!payload.payload.isAdmin){
+    return true
+  }
+  return undefined
 }
 
 module.exports = expressJwt;
